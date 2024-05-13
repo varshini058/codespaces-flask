@@ -27,5 +27,12 @@
       ]
     }
   },
-  "forwardPorts": [5000]
+  "forwardPorts": [
+    5000
+  ],
+  "features": {
+    "ghcr.io/itsmechlark/features/postgresql:1": {
+      "version": "latest"
+    }
+  }
 }
