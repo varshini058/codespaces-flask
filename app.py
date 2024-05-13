@@ -8,6 +8,7 @@ app = Flask(__name__)
 @app.route("/")
 def hello_world():
     return render_template("index.html", title="Hello")
+
 @app.route("/returncviapi")
 def returncviapi(): 
  url = "https://services.nvd.nist.gov/rest/json/cves/2.0/?lastModStartDate=2024-05-08T13:00:00.000%2B01:00&lastModEndDate=2024-05-10T13:36:00.000%2B01:00"
@@ -41,3 +42,8 @@ def returncviapi():
      iddict = {"id":item['cve'] ['id'],"sourceIdentifier":item['cve'] ['sourceIdentifier'],"published": item['cve']['published'],"lastModified": item['cve']['lastModified'],"vulnStatus":item['cve']['vulnStatus']}
      idlist.append(iddict)
  return json.dumps(idlist)
+
+@app.route("/cves/list")
+def prepare_cveslist():
+    return render_template("cvelist.html", title="cveslist")
+

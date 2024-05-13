@@ -1,0 +1,117 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Data Table</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .pagination {
+            display: inline-block;
+        }
+        .pagination button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            margin: 4px;
+            border: none;
+            cursor: pointer;
+        }
+        .pagination button.active {
+            background-color: #45a049;
+        }
+        .pagination button:hover:not(.active) {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>SourceIdentifer</th>
+                <th>Published</th>
+                <th>LastModified</th>
+                <th>vulnStatus</th>
+
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            <!-- Table body will be populated dynamically using JavaScript -->
+        </tbody>
+    </table>
+    <div class="pagination" id="pagination"></div>
+
+    <script>
+        // Function to fetch data from the API
+        async function fetchData(pageNumber) {
+            const response = await fetch(`https://turbo-space-fiesta-v6pqjgr9r659fp97j-5000.app.github.dev/returncviapi?page=${pageNumber}`);
+            const data = await response.json();
+            return data;
+        }
+
+        // Function to populate the table with data
+        async function populateTable(pageNumber) {
+            const data = await fetchData(pageNumber);
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = '';
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.id}</td>
+                    <td>${row.sourceIdentifier}</td>
+                    <td>${row.published}</td>
+                    <td>${row.lastModified}</td>
+                    <td>${row.vulnStatus}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // Function to create pagination buttons
+        async function createPaginationButtons() {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+            const data = await fetchData(1); // Fetch first page to get total number of pages
+            const totalPages = data.total_pages;
+            for (let i = 1; i <= totalPages; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                button.addEventListener('click', () => {
+                    populateTable(i);
+                    updateActiveButton(i);
+                });
+                pagination.appendChild(button);
+            }
+        }
+
+        // Function to update the active pagination button
+        function updateActiveButton(pageNumber) {
+            const buttons = document.querySelectorAll('.pagination button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+                if (parseInt(button.textContent) === pageNumber) {
+                    button.classList.add('active');
+                }
+            });
+        }
+
+        // Initial setup
+        populateTable(1);
+        createPaginationButtons();
+    </script>
+</body>
+</html>
+
